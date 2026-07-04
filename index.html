@@ -1,0 +1,167 @@
+<!doctype html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>LarPratico</title>
+    <link rel="stylesheet" href="styles.css">
+  </head>
+  <body>
+    <div class="app-shell">
+      <header class="topbar">
+        <div class="brand">
+          <div class="logo" aria-hidden="true">
+            <span class="logo-roof"></span>
+            <span class="logo-cart"></span>
+          </div>
+          <div>
+            <h1>LarPratico</h1>
+            <p>Compras e casa no controle</p>
+          </div>
+        </div>
+        <button class="icon-button" id="resetDemoBtn" type="button" title="Recarregar dados de exemplo" aria-label="Recarregar dados de exemplo">
+          <span aria-hidden="true">R</span>
+        </button>
+      </header>
+
+      <main>
+        <section class="summary-grid" aria-label="Resumo">
+          <article class="summary-card">
+            <span>Lista atual</span>
+            <strong id="currentTotal">R$ 0,00</strong>
+          </article>
+          <article class="summary-card">
+            <span>No carrinho</span>
+            <strong id="checkedCount">0 itens</strong>
+          </article>
+          <article class="summary-card">
+            <span>Despensa</span>
+            <strong id="pantryAlert">Tudo ok</strong>
+          </article>
+        </section>
+
+        <nav class="tabs" aria-label="Modulos do app">
+          <button class="tab-button active" type="button" data-tab="shopping">Lista</button>
+          <button class="tab-button" type="button" data-tab="finance">Gastos</button>
+          <button class="tab-button" type="button" data-tab="insights">Rankings</button>
+          <button class="tab-button" type="button" data-tab="pantry">Despensa</button>
+          <button class="tab-button" type="button" data-tab="recipes">Receitas</button>
+        </nav>
+
+        <section class="tab-panel active" id="shopping" aria-labelledby="Lista">
+          <form class="entry-panel" id="itemForm">
+            <div class="form-grid">
+              <label>
+                Produto
+                <input id="itemName" list="historyList" autocomplete="off" placeholder="Ex: arroz, leite, banana" required>
+              </label>
+              <label>
+                Quantidade
+                <input id="itemQty" placeholder="Ex: 2 kg" required>
+              </label>
+              <label>
+                Categoria
+                <select id="itemCategory">
+                  <option>Alimentacao</option>
+                  <option>Limpeza</option>
+                  <option>Feira</option>
+                  <option>Higiene</option>
+                  <option>Outros</option>
+                </select>
+              </label>
+              <label>
+                Preco atual
+                <input id="itemPrice" inputmode="decimal" placeholder="0,00" required>
+              </label>
+            </div>
+            <div class="price-helper" id="priceHelper">Digite um produto para ver o ultimo preco pago.</div>
+            <div class="form-actions">
+              <button class="primary-button" type="submit">Adicionar</button>
+              <button class="secondary-button" id="barcodeBtn" type="button">Codigo</button>
+              <button class="secondary-button" id="shareBtn" type="button">WhatsApp</button>
+            </div>
+          </form>
+
+          <datalist id="historyList"></datalist>
+          <div class="list-toolbar">
+            <button class="secondary-button compact" id="finishPurchaseBtn" type="button">Finalizar compra</button>
+            <button class="ghost-button compact" id="clearCheckedBtn" type="button">Remover marcados</button>
+          </div>
+          <div class="shopping-list" id="shoppingList"></div>
+          <div class="empty-state" id="shoppingEmpty">Sua lista esta pronta para receber os primeiros itens.</div>
+        </section>
+
+        <section class="tab-panel" id="finance" aria-labelledby="Gastos">
+          <div class="controls-row">
+            <label>
+              Periodo
+              <select id="periodFilter">
+                <option value="week">Semana</option>
+                <option value="month" selected>Mes</option>
+                <option value="year">Ano</option>
+              </select>
+            </label>
+          </div>
+          <div class="chart-wrap">
+            <canvas id="spendChart" width="640" height="320" aria-label="Grafico de gastos por categoria"></canvas>
+          </div>
+          <div class="finance-list" id="financeList"></div>
+        </section>
+
+        <section class="tab-panel" id="insights" aria-labelledby="Rankings">
+          <div class="insight-grid">
+            <article>
+              <h2>Mais queridos</h2>
+              <ol id="favoriteRanking"></ol>
+            </article>
+            <article>
+              <h2>Peso no bolso</h2>
+              <ol id="expensiveRanking"></ol>
+            </article>
+          </div>
+          <div class="product-history" id="productHistory"></div>
+        </section>
+
+        <section class="tab-panel" id="pantry" aria-labelledby="Despensa">
+          <form class="entry-panel" id="pantryForm">
+            <div class="form-grid pantry-grid">
+              <label>
+                Item
+                <input id="pantryName" placeholder="Ex: feijao, molho, farinha" required>
+              </label>
+              <label>
+                Validade
+                <input id="pantryDate" type="date" required>
+              </label>
+              <label>
+                Quantidade
+                <input id="pantryQty" placeholder="Ex: 1 pacote" required>
+              </label>
+            </div>
+            <div class="form-actions">
+              <button class="primary-button" type="submit">Salvar na despensa</button>
+            </div>
+          </form>
+          <div class="pantry-list" id="pantryList"></div>
+        </section>
+
+        <section class="tab-panel" id="recipes" aria-labelledby="Receitas">
+          <div class="recipe-grid" id="recipeGrid"></div>
+        </section>
+      </main>
+    </div>
+
+    <dialog id="barcodeDialog">
+      <form method="dialog">
+        <h2>Leitor de codigo</h2>
+        <video id="barcodeVideo" playsinline muted></video>
+        <p id="barcodeStatus">A camera sera usada quando o navegador permitir BarcodeDetector.</p>
+        <div class="form-actions">
+          <button class="secondary-button" value="cancel" type="submit">Fechar</button>
+        </div>
+      </form>
+    </dialog>
+
+    <script src="app.js"></script>
+  </body>
+</html>
